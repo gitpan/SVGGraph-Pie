@@ -33,7 +33,7 @@ SYNOPSIS
 
 DESCRIPTION
 
-  SVGGraph::Pie allow you to create Piegraphs as SVG very easily.
+SVGGraph::Pie allow you to create Piegraphs as SVG very easily.
 
 EXAMPLES
 
@@ -73,8 +73,8 @@ EXAMPLES
 
 AUTHOR
 
-  milano <milano@cpan.org>
+milano <milano@cpan.org>
 
 SEE ALSO
 
-  SVG, SVGGraph
+SVG, SVGGraph

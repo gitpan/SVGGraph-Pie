@@ -2,7 +2,7 @@ package SVGGraph::Pie;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = '0.02';
+$VERSION = '0.03';
 use constant PI  => '3.14159265';
 use constant GAP => 15;
 
@@ -204,7 +204,7 @@ SVGGraph::Pie - Perl extension for Pie as SVG
 
 =head1 DESCRIPTION
 
-  SVGGraph::Pie allow you to create Piegraphs as SVG very easily.
+SVGGraph::Pie allow you to create Piegraphs as SVG very easily.
 
 =head1 EXAMPLES
 
@@ -245,10 +245,10 @@ SVGGraph::Pie - Perl extension for Pie as SVG
 
 =head1 AUTHOR
 
-  milano <milano@cpan.org>
+milano <milano@cpan.org>
 
 =head1 SEE ALSO
 
-  SVG, SVGGraph
+SVG, SVGGraph
 
 =cut
