@@ -28,7 +28,6 @@ my $output2 = $svggraph->CreateGraph(
 	centerleft  => 130,
 	radius      => 50,
 	borderwidth => 1,
-	paintwidth  => 1,
 	label => 'true',
     },
     [

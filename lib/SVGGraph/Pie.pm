@@ -2,8 +2,8 @@ package SVGGraph::Pie;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = '0.04';
-use constant PI  => '3.14159265';
+$VERSION = '0.05';
+use constant PI  => '3.141592654';
 use constant GAP => 15;
 
 use SVG;
@@ -12,8 +12,8 @@ sub _croak { require Carp; Carp::croak(@_) }
 sub _carp  { require Carp; Carp::carp(@_)  }
 
 sub new {
-  my $self = shift;
-  return bless {}, $self;
+    my $self = shift;
+    return bless {}, $self;
 }
 
 sub CreateGraph {
@@ -40,9 +40,7 @@ sub CreateGraph {
     $cy = $$options{centertop}  if $$options{centertop};
 
     my $borderwidth = 4;
-    my $paintwidth  = 4;
     $borderwidth = $$options{borderwidth} if $$options{borderwidth};
-    $paintwidth  = $$options{paintwidth}  if $$options{paintwidth};
 
     ## Calc total
     my $total;
@@ -58,9 +56,13 @@ sub CreateGraph {
     );
 
     ## Draw Lines
-    $start = 0;
+    $start = -90;
+
+    my @separator_lines;
+    my $pie = $svg->tag('g', id => "pie_chart", transform => "translate($cx,$cy)");
+
     for (my $i = 0; $i < @$values; $i++) {
-	my $percent = _round($values->[$i]->{value} / $total * 100);
+	my $slice   = $values->[$i]->{value} / $total * 360;
 
 	my $color = $values->[$i]->{color};
 	if ($color eq "") {
@@ -69,18 +71,21 @@ sub CreateGraph {
 	}
 	push @labelcolors, $color;
 
-	for (my $j = $start; $j < $percent + $start; $j += 0.1) {
-	    $svg->line(
-		x1 => $cx, y1 => $cy,
-		x2 => $cx + sin(2 * PI * ($j / 100)) * $radius,
-		y2 => $cy - cos(2 * PI * ($j / 100)) * $radius,
-		style => {
-		    'stroke' => $color,
-		    'stroke-width' => $paintwidth,
-		},
-	    );
-	}
-	$start += $percent;
+	my $do_arc = 0;
+	my $radians = $slice * PI / 180;
+	$do_arc++  if $slice > 180;
+
+	my $ry = ($radius * sin($radians));
+	my $rx = $radius * cos($radians);
+	push(@separator_lines, $rx, $ry, $start);
+
+	my $g = $pie->tag('g', id => "wedge_$i", transform => "rotate($start)");
+	$g->path(
+	    style => {'fill' => "$color"},
+	    d => "M $radius,0 A $radius,$radius 0 $do_arc,1 $rx,$ry L 0,0 z"
+	);
+
+	$start += $slice;
     }
 
     ## Draw circle
@@ -96,21 +101,22 @@ sub CreateGraph {
     );
 
     ## Draw separater
-    $start = 0;
-    for (my $i = 0; $i < @$values; $i++) {
-	my $percent = _round($values->[$i]->{value} / $total * 100);
-
-	$svg->line(
-	    x1 => $cx,
-	    y1 => $cy,
-	    x2 => $cx + sin(2 * PI * ($start / 100)) * $radius,
-	    y2 => $cy - cos(2 * PI * ($start / 100)) * $radius,
+    my $i = 0;
+    while (my $start = pop(@separator_lines)) {
+	$i++;
+	my $separator_y = pop(@separator_lines);
+	my $separator_x = pop(@separator_lines);
+	my $g = $pie->tag('g', id => "line_$i", transform => "rotate($start)");
+	$g->line(
+	    x1 => 0,
+	    y1 => 0,
+	    x2 => $separator_x,
+	    y2 => $separator_y,
 	    style => {
 		'stroke' => 'black',
 		'stroke-width' => $borderwidth
 	    },
 	);
-	$start += $percent;
     }
 
     ## Title
@@ -124,7 +130,7 @@ sub CreateGraph {
 	)->cdata($$options{title});
     }
 
-    ## Lable
+    ## Label
     if ($$options{label}) {
 	my $labelleft = $cx + $radius + 10;
 	$labelleft = $$options{labelleft} if $$options{labelleft};
@@ -135,16 +141,17 @@ sub CreateGraph {
 	    $svg->rectangle(
 		'x' => $labelleft,
 		'y' => $start,
-		'width' => 40,
+		'width' => 20,
 		'height' => 20,
 		'rx' => 5,
 		'ry' => 5,
 		'style' => {
 		    fill => $labelcolors[$i],
+		    stroke => 'black',
 		},
 	    );
 	    $svg->text(
-		'x' => $labelleft + 45,
+		'x' => $labelleft + 25,
 		'y' => $start + GAP,
 	    )->cdata($values->[$i]->{label});
 
@@ -188,7 +195,6 @@ SVGGraph::Pie - Perl extension for Pie as SVG
           title => 'Financial Results Q1 2002',
           titlestyle => 'font-size:24;fill:#FF0000;',
           borderwidth => 4, # border line's width
-          paintwidth => 2,  # painting line's width
           label => 'true',  # Woud you like display label?
           labeltop  => '100',
           labelleft => '400',
@@ -236,7 +242,6 @@ SVGGraph::Pie allow you to create Piegraphs as SVG very easily.
           title => 'Financial Results Q1 2002',
           titlestyle => 'font-size:24;fill:#FF0000;',
           borderwidth => 4,
-          paintwidth => 2,
           label => 'true',
       },
       \@values,

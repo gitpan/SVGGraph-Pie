@@ -17,7 +17,6 @@ SYNOPSIS
           title => 'Financial Results Q1 2002',
           titlestyle => 'font-size:24;fill:#FF0000;',
           borderwidth => 4, # border line's width
-          paintwidth => 2,  # painting line's width
           label => 'true',  # Woud you like display label?
           labeltop  => '100',
           labelleft => '400',
@@ -65,7 +64,6 @@ EXAMPLES
           title => 'Financial Results Q1 2002',
           titlestyle => 'font-size:24;fill:#FF0000;',
           borderwidth => 4,
-          paintwidth => 2,
           label => 'true',
       },
       \@values,
