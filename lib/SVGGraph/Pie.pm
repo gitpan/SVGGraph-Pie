@@ -2,7 +2,7 @@ package SVGGraph::Pie;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = '0.01';
+$VERSION = '0.02';
 use constant PI  => '3.14159265';
 use constant GAP => 15;
 
@@ -54,7 +54,7 @@ sub CreateGraph {
     my $svg = SVG->new(
 	width  => $imageheight,
 	height => $imageheight,
-	title  => $$options{title},
+	title  => ($$options{title} ? $$options{title} : ''),
     );
 
     ## Draw Lines
@@ -204,51 +204,51 @@ SVGGraph::Pie - Perl extension for Pie as SVG
 
 =head1 DESCRIPTION
 
-SVGGraph::Pie allow you to create Piegraphs as SVG very easily.
+  SVGGraph::Pie allow you to create Piegraphs as SVG very easily.
 
 =head1 EXAMPLES
 
-#!/usr/bin/perl -w
+  #!/usr/bin/perl -w
 
-use strict;
-use SVGGraph::Pie;
+  use strict;
+  use SVGGraph::Pie;
 
-my @values = [
-    {value => 11, color => 'red'},
-    {value => 23, color => 'rgb(200,0,0)'},
-    {value => 39, color => 'rgb(150,0,0)'},
-    {value => 13, color => 'rgb(100,0,0)'},
-    {value => 44, color => 'rgb(100,0,50)'},
-    {value => 50, color => 'rgb(50,0,100)'},
-    {value => 60, color => 'rgb(0,0,100)'},
-    {value => 12, color => 'rgb(0,0,150)'},
-    {value => 39, color => 'rgb(0,0,200)'},
-];
+  my @values = [
+      {value => 11, color => 'red'},
+      {value => 23, color => 'rgb(200,0,0)'},
+      {value => 39, color => 'rgb(150,0,0)'},
+      {value => 13, color => 'rgb(100,0,0)'},
+      {value => 44, color => 'rgb(100,0,50)'},
+      {value => 50, color => 'rgb(50,0,100)'},
+      {value => 60, color => 'rgb(0,0,100)'},
+      {value => 12, color => 'rgb(0,0,150)'},
+      {value => 39, color => 'rgb(0,0,200)'},
+  ];
 
-my $svggraph = SVGGraph::Pie->new;
+  my $svggraph = SVGGraph::Pie->new;
 
-print "Content-type: image/svg-xml\n\n";
-print $svggraph->CreateGraph(
-    {
-        imageheight => 500,
-        imagewidth  => 1000,
-        radius => 200,
-        title => 'Financial Results Q1 2002',
-        titlestyle => 'font-size:24;fill:#FF0000;',
-        borderwidth => 4,
-        paintwidth => 2,
-        label => 'true',
-    },
-    \@values,
-);
+  print "Content-type: image/svg-xml\n\n";
+  print $svggraph->CreateGraph(
+      {
+          imageheight => 500,
+          imagewidth  => 1000,
+          radius => 200,
+          title => 'Financial Results Q1 2002',
+          titlestyle => 'font-size:24;fill:#FF0000;',
+          borderwidth => 4,
+          paintwidth => 2,
+          label => 'true',
+      },
+      \@values,
+  );
 
 
 =head1 AUTHOR
 
-milano <milano@gd6.so-net.ne.jp>
+  milano <milano@cpan.org>
 
 =head1 SEE ALSO
 
-SVG, SVGGraph
+  SVG, SVGGraph
 
 =cut
