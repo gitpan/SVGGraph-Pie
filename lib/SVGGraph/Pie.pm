@@ -2,7 +2,7 @@ package SVGGraph::Pie;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = '0.05';
+$VERSION = '0.06';
 use constant PI  => '3.141592654';
 use constant GAP => 15;
 
@@ -40,7 +40,7 @@ sub CreateGraph {
     $cy = $$options{centertop}  if $$options{centertop};
 
     my $borderwidth = 4;
-    $borderwidth = $$options{borderwidth} if $$options{borderwidth};
+    $borderwidth = $$options{borderwidth} if defined $$options{borderwidth};
 
     ## Calc total
     my $total;
@@ -89,15 +89,17 @@ sub CreateGraph {
     }
 
     ## Draw circle
+    my $circlestyle = {'fill-opacity' => 0};
+    if ($borderwidth) {
+        $circlestyle->{stroke} = 'black';
+        $circlestyle->{'stroke-width'} = $borderwidth;
+    }
+
     $svg->circle(
 	cx => $cx,
 	cy => $cy,
 	r  => $radius,
-	style => {
-	    'stroke' => 'black',
-	    'stroke-width' => $borderwidth,
-	    'fill-opacity' => 0,
-	},
+	style => $circlestyle,
     );
 
     ## Draw separater
@@ -107,15 +109,18 @@ sub CreateGraph {
 	my $separator_y = pop(@separator_lines);
 	my $separator_x = pop(@separator_lines);
 	my $g = $pie->tag('g', id => "line_$i", transform => "rotate($start)");
+        my $linestyle = {};
+        if ($borderwidth) {
+            $linestyle->{stroke} = 'black';
+            $linestyle->{'stroke-width'} = $borderwidth;
+        }
+
 	$g->line(
 	    x1 => 0,
 	    y1 => 0,
 	    x2 => $separator_x,
 	    y2 => $separator_y,
-	    style => {
-		'stroke' => 'black',
-		'stroke-width' => $borderwidth
-	    },
+	    style => $linestyle,
 	);
     }
 
@@ -219,7 +224,7 @@ SVGGraph::Pie allow you to create Piegraphs as SVG very easily.
   use strict;
   use SVGGraph::Pie;
 
-  my @values = [
+  my @values = (
       {value => 11, color => 'red'},
       {value => 23, color => 'rgb(200,0,0)'},
       {value => 39, color => 'rgb(150,0,0)'},
@@ -229,7 +234,7 @@ SVGGraph::Pie allow you to create Piegraphs as SVG very easily.
       {value => 60, color => 'rgb(0,0,100)'},
       {value => 12, color => 'rgb(0,0,150)'},
       {value => 39, color => 'rgb(0,0,200)'},
-  ];
+  );
 
   my $svggraph = SVGGraph::Pie->new;
 
